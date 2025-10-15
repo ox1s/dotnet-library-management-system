@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace library_management_system.Models;
+namespace Library.Models;
 
 public class AuthorContext : DbContext
 {

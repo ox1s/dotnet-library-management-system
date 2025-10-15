@@ -1,9 +1,9 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using library_management_system.Models;
+using Library.Models;
 
-namespace library_management_system.Controllers;
+namespace Library.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

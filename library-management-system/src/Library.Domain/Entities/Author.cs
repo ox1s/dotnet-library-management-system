@@ -1,4 +1,4 @@
-namespace library_management_system.Models;
+namespace Library.Models;
 
 public class Author
 {

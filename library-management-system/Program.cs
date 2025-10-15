@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using library_management_system.Models;
+using Library.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +23,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-record Author(int Id, string Name, DateOnly DateOfBirth);
-record Book(int Id, string Titile, int PublishedYear, int AouthorId);
