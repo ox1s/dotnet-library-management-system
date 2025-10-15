@@ -1,10 +1,12 @@
+using Core.Entities;
+
 namespace Core.Interfaces;
 
 public interface IBookRepository
 {
-    IEnumerable<Book> GetAllAsync();
-    Book GetByIdAsync(int id);
+    Task<IEnumerable<Book>> GetAllAsync();
+    Task<Book?> GetByIdAsync(long id);
     Task AddAsync(Book book);
     Task UpdateAsync(Book book);
-    Task DeleteAsync(int id);
+    Task DeleteAsync(long id);
 }

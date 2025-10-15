@@ -1,10 +1,12 @@
+using Core.Entities;
+
 namespace Core.Interfaces;
 
 public interface IAuthorRepository
 {
-    IEnumerable<Author> GetAllAsync();
-    Author GetByIdAsync(int id);
+    Task<IEnumerable<Author>> GetAllAsync();
+    Task<Author?> GetByIdAsync(long id);
     Task AddAsync(Author author);
     Task UpdateAsync(Author author);
-    Task DeleteAsync(int id);
+    Task DeleteAsync(long id);
 }

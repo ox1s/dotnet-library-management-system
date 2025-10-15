@@ -1,6 +1,18 @@
+using DAL;
+using BLL;
 using Microsoft.EntityFrameworkCore;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Репозитории
+builder.Services
+    .AddDataAccessLayer()
+    .AddBusinessLogicLayer(); 
+
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
