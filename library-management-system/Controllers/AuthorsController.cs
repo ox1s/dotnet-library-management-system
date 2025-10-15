@@ -1,33 +1,46 @@
+
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using library_management_system.Models;
 
 namespace library_management_system.Controllers;
 
+[Route("api/[controller]")]
 [ApiController]
 public class AuthorsController : ControllerBase
 {
-    List<string> _author = new List<string>
-    {
-        "Андерс Хейлсберг",
-        "Джеффри Рихтер",
-        "Джозеф и Бен Албахари",
-        "Эндрю Лок"
-    };
-    [HttpGet("author")]
-    public IEnumerable<string> Index() => _author;
+    private readonly AuthorContext _context;
 
-    [HttpPost("author")]
-    public ActionResult Update(UpdateModel model)
+    public AuthorsController(AuthorContext context)
     {
-        if (model.Id < 0 || model.Id > _author.Count)
-            return NotFound();
-        _author[model.Id] = model.Name;
-        return Ok();
+        _context = context;
     }
 
+    // GET: api/Authors
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthor()
+    {
+        return await _context.Authors
+            .Select(x => new AuthorDTO(x))
+            .ToListAsync();
+    }
 
-    [HttpGet("author/{id}")]
-    public ActionResult<string> View(int id) =>
-        (id >= 0 && id < _author.Count)
-        ? _author[id]
-        : NotFound();
+    // GET: api/Authors/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AuthorDTO>> GetAuthor(long id)
+    {
+        var author = await _context.Authors.FindAsync(id);
+
+        if (author == null) return NotFound();
+
+        return AuthorToDTO(author);
+    }
+
+     private static AuthorDTO AuthorToDTO(Author author) =>
+       new AuthorDTO
+       {
+           Id = author.Id,
+           Name = author.Name,
+           DateOfBirth = author.DateOfBirth
+       };
 }
