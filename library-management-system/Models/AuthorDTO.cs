@@ -5,4 +5,11 @@ public class AuthorDTO
     public long Id { get; set; }
     public string? Name { get; set; }
     public DateTime DateOfBirth { get; set; }
+
+    public AuthorDTO(AuthorDTO authorDTO)
+    {
+        Id = authorDTO.Id;
+        Name = authorDTO.Name;
+        DateOfBirth = authorDTO.DateOfBirth;
+    }
 }
