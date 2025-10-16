@@ -44,7 +44,7 @@ public class AuthorService : IAuthorService
             DateOfBirth = author.DateOfBirth
         };
     }
-    public Task UpdateAuthorAsync(Author author) =>
+    public Task UpdateAuthorInformationAsync(Author author) =>
     null;
     public Task DeleteAuthorAsync(long id) =>
     null;
