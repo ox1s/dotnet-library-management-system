@@ -1,3 +1,3 @@
 namespace Core.DTOs;
 
-public record AuthorDTO(long Id, string Name, long BookCount);
+public record AuthorDto(long Id, string Name, DateOnly DateOfBirth);

@@ -2,7 +2,7 @@ using Core.Entities;
 
 namespace Core.Interfaces;
 
-public interface IBookRepository
+public interface IBooksRepository
 {
     Task<IEnumerable<Book>> GetAllAsync();
     Task<Book?> GetByIdAsync(long id);

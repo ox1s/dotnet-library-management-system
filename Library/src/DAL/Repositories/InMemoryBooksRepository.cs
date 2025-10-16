@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Repositories;
 
-public class InMemoryBookRepository : IBookRepository
+public class InMemoryBooksRepository : IBooksRepository
 {
     List<Book> _books = new List<Book>();
 

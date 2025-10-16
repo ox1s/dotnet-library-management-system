@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Репозитории
 builder.Services
     .AddDataAccessLayer()
     .AddBusinessLogicLayer(); 

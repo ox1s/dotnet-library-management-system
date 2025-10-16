@@ -3,7 +3,7 @@ using Core.Entities;
 
 namespace DAL.Repositories;
 
-public class InMemoryAuthorRepository : IAuthorRepository
+public class InMemoryAuthorsRepository : IAuthorsRepository
 {
     List<Author> _authors = new List<Author>();
 
@@ -21,12 +21,13 @@ public class InMemoryAuthorRepository : IAuthorRepository
     }
     public Task UpdateAsync(Author author)
     {
-        var authorToUpdate = _authors.FirstOrDefault(x => x.Id == author.Id);
+        var indexToUpdate = _authors.FindIndex(x => x.Id == author.Id);
+        _authors[indexToUpdate] = author;
         return Task.CompletedTask;
     }
-    public Task DeleteAsync(long id)
+    public Task DeleteAsync(Author author)
     {
-        _authors.RemoveAll(Author => Author.Id == id);
+        _authors.Remove(author);
         return Task.CompletedTask;
     }
 }

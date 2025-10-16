@@ -9,26 +9,33 @@ namespace Api.Controllers;
 [ApiController]
 public class AuthorsController : ControllerBase
 {
-    private readonly IAuthorService _authorService;
+    private readonly IAuthorsService _authorService;
 
-    public AuthorsController(IAuthorService authorService)
+    public AuthorsController(IAuthorsService authorService)
     {
         _authorService = authorService;
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAuthor(long id)
     {
-        var author = await _authorService.GetAuthorByIdAsync(id);
-        if (author == null) return NotFound();
-        return Ok(author);
+        var authorDto = await _authorService.GetAuthorByIdAsync(id); 
+        
+        if (authorDto == null) return NotFound();
+
+        return Ok(authorDto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAuthor([FromBody] AuthorDTO authorDTO)
+    [ProducesResponseType<AuthorDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateAuthor([FromBody] CreateAuthorDto createDto)
     {
-        var author = await _authorService.AddAuthorAsync(authorDTO);
-        return CreatedAtAction(nameof(GetAuthor), new { id = author.Id }, author);
+        var createdAuthorDto = await _authorService.AddAuthorAsync(createDto);
+
+        return Ok(createdAuthorDto);
     }
 
 }
