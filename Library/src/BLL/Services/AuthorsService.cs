@@ -25,10 +25,10 @@ public class AuthorsService : IAuthorsService
 
         return authorsDtos;
     }
-    public async Task<AuthorDto?> GetAuthorByIdAsync(long id)
+    public async Task<AuthorDto> GetAuthorByIdAsync(long id)
     {
         var author = await _authorsRepository.GetByIdAsync(id);
-        if (author == null) return null;
+        if (author == null) throw new AbsentAuthorException($"Автора с id={id} не существует");
         return new AuthorDto(
                 author.Id,
                 author.Name,
@@ -37,6 +37,13 @@ public class AuthorsService : IAuthorsService
 
     public async Task<AuthorDto> AddAuthorAsync(CreateAuthorDto authorDto)
     {
+        var existingAuthors = await _authorsRepository.GetAllAsync();
+
+        if (existingAuthors.Any(author => author.Name == authorDto.Name))
+        {
+            throw new DuplicateAuthorException($"Автор с именем '{authorDto.Name}' уже существует.");
+        }
+
         var authorToAdd = new Author
         {
             Name = authorDto.Name,
@@ -49,6 +56,7 @@ public class AuthorsService : IAuthorsService
                 authorToAdd.Id,
                 authorToAdd.Name,
                 authorToAdd.DateOfBirth);
+
     }
     public async Task UpdateAuthorInformationAsync(AuthorDto authorDto)
     {
@@ -62,17 +70,11 @@ public class AuthorsService : IAuthorsService
 
         await _authorsRepository.UpdateAsync(authorToUpdate);
     }
-    public async Task DeleteAuthorAsync(AuthorDto authorDto)
+    public async Task DeleteAuthorAsync(long id)
     {
-        
-        var authorToDelete = new Author
-        {
-            Id = authorDto.Id,
-            Name = authorDto.Name,
-            DateOfBirth = authorDto.DateOfBirth
-        };
-
-        await _authorsRepository.DeleteAsync(authorToDelete);
+        var authorToDelete = await _authorsRepository.GetByIdAsync(id);
+        if (authorToDelete == null) throw new AbsentAuthorException($"Автора с id={id} не существует");
+        await _authorsRepository.DeleteAsync(id);
     }
 }
 

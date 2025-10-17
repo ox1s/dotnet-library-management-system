@@ -7,13 +7,14 @@ namespace Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+
 public class BooksController : ControllerBase
 {
     private readonly IBooksService _bookService;
 
-    public BooksController(IBooksService authorService)
+    public BooksController(IBooksService bookService)
     {
-        _bookService = authorService;
+        _bookService = bookService;
     }
 
     [HttpGet("{id}")]
@@ -21,21 +22,21 @@ public class BooksController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetBook(long id)
     {
-        var authorDto = await _bookService.GetBookByIdAsync(id); 
-        
-        if (authorDto == null) return NotFound();
+        var bookDto = await _bookService.GetBookByIdAsync(id);
 
-        return Ok(authorDto);
+        if (bookDto == null) return NotFound();
+
+        return Ok(bookDto);
     }
 
-    // [HttpPost]
-    // [ProducesResponseType<BookDto>(StatusCodes.Status201Created)]
-    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    // public async Task<IActionResult> CreateBook([FromBody] CreateBookDto createDto)
-    // {
-    //     var createdBookDto = await _bookService.AddBookAsync(createDto);
+    [HttpPost]
+    [ProducesResponseType<BookDto>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateBook([FromBody] CreateBookDto createDto)
+    {
+        var createdBookDto = await _bookService.AddBookAsync(createDto);
 
-    //     return Ok(createdBookDto);
-    // }
+        return CreatedAtAction(nameof(GetBook), new { id = createdBookDto.Id }, createdBookDto);
+    }
 
 }

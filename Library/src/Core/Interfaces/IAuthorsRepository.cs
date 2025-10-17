@@ -8,5 +8,5 @@ public interface IAuthorsRepository
     Task<Author?> GetByIdAsync(long id);
     Task AddAsync(Author author);
     Task UpdateAsync(Author author);
-    Task DeleteAsync(Author author);
+    Task DeleteAsync(long id);
 }

@@ -25,9 +25,9 @@ public class InMemoryAuthorsRepository : IAuthorsRepository
         _authors[indexToUpdate] = author;
         return Task.CompletedTask;
     }
-    public Task DeleteAsync(Author author)
+    public Task DeleteAsync(long id)
     {
-        _authors.Remove(author);
+        _authors.RemoveAll(x => x.Id == id);
         return Task.CompletedTask;
     }
 }

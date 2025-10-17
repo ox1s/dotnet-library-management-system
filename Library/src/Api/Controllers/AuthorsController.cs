@@ -21,8 +21,8 @@ public class AuthorsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAuthor(long id)
     {
-        var authorDto = await _authorService.GetAuthorByIdAsync(id); 
-        
+        var authorDto = await _authorService.GetAuthorByIdAsync(id);
+
         if (authorDto == null) return NotFound();
 
         return Ok(authorDto);
@@ -35,7 +35,7 @@ public class AuthorsController : ControllerBase
     {
         var createdAuthorDto = await _authorService.AddAuthorAsync(createDto);
 
-        return Ok(createdAuthorDto);
+        return CreatedAtAction(nameof(GetAuthor), new { id = createdAuthorDto.Id }, createdAuthorDto);
     }
 
 }

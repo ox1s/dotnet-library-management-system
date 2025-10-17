@@ -6,11 +6,10 @@ public class Book
 {
     public long Id { get; set; }
     [Required]
-    public string? Title { get; set; }
+    public string Title { get; set; } = null!;
     public int PublishedYear { get; set; }
     
     
-    // FK
     public long AuthorId { get; set; }
     
     [ForeignKey("AuthorId")]

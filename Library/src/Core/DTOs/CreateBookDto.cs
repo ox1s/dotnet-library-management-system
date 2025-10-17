@@ -1,3 +1,3 @@
 namespace Core.DTOs;
 
-public record CreateBookDto(string Titile, int PublishedYear);
+public record CreateBookDto(string Title, int PublishedYear, long AuthorId);
