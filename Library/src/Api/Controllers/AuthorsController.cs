@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Library.Core.Interfaces;
 using Library.Core.DTOs;
-using Library.API.Controllers;
 
 
 namespace Api.Controllers;
 
-public class AuthorsController : BaseController
+[Route("api/[controller]")]
+[ApiController]
+public class AuthorsController : ControllerBase
 {
     private readonly IAuthorService _authorService;
 
@@ -37,7 +38,7 @@ public class AuthorsController : BaseController
     [HttpPut("{id}")]
     [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateAuthor([FromQuery] long id, [FromBody] AuthorDto author)
+    public async Task<IActionResult> UpdateAuthor([FromRoute] long id, [FromBody] AuthorDto author)
     {
         await _authorService.UpdateAuthorInformationAsync(author);
         return Ok();
@@ -46,7 +47,7 @@ public class AuthorsController : BaseController
     [HttpDelete("{id}")]
     [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteAuthor([FromQuery] long id)
+    public async Task<IActionResult> DeleteAuthor([FromRoute] long id)
     {
         await _authorService.DeleteAuthorAsync(id);
         return Ok();

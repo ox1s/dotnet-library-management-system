@@ -6,18 +6,16 @@ namespace Library.BLL.Services;
 
 public class BookService : IBookService
 {
-    private readonly IBookRepository _bookRepository;
-    private readonly IAuthorRepository _authorRepository;
-
-    public BookService(IBookRepository bookRepository, IAuthorRepository authorsRepository)
+    private readonly IUnitOfWork _unitOfWork;
+    public BookService(IUnitOfWork unitOfWork)
     {
-        _bookRepository = bookRepository;
-        _authorRepository = authorsRepository;
+        _unitOfWork = unitOfWork;
+
     }
 
     public async Task<IEnumerable<BookDto>> GetAllBooksAsync()
     {
-        var booksEntities = await _bookRepository.GetAllAsync();
+        var booksEntities = await _unitOfWork.BookRepository.GetAllAsync();
 
         var booksDtos = booksEntities.Select(book => new BookDto(
             book.Id,
@@ -25,15 +23,23 @@ public class BookService : IBookService
             book.PublishedYear,
             book.AuthorId
         ));
-
         return booksDtos;
     }
     public async Task<BookDto> GetBookByIdAsync(long id)
     {
-        var book = await _bookRepository.GetByIdAsync(id);
-        if (book == null) throw new AbsentBookException($"Книжки с id={id} не существует");
-        var author = await _authorRepository.GetByIdAsync(book.AuthorId);
-        if (author == null) throw new AbsentAuthorException($"Автора с id={id} не существует");
+        var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
+        if (book == null)
+        {
+            throw new AbsentBookException
+                ($"Книжки с id={id} не существует");
+        }
+        var author = await _unitOfWork.AuthorRepository.GetByIdAsync(book.AuthorId);
+        if (author == null)
+        {
+            throw new AbsentAuthorException
+                ($"Автора с id={id} не существует");
+        }
+
         return new BookDto(
                 book.Id,
                 book.Title,
@@ -44,16 +50,27 @@ public class BookService : IBookService
 
     public async Task<BookDto> AddBookAsync(CreateBookDto bookDto)
     {
-        var existingAuthorsOfBooks = await _bookRepository.GetAllAsync();
+        var existingAuthorsOfBooks = await _unitOfWork.BookRepository.GetAllAsync();
 
         if (existingAuthorsOfBooks.Any(book => book.AuthorId == bookDto.AuthorId && book.Title == bookDto.Title))
         {
-            var author = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
-            throw new DuplicateBookException($"Книга с названием '{bookDto.Title}' уже существует у автора {author.Name}.");
+            if (await _unitOfWork.AuthorRepository.ExistsAsync(bookDto.AuthorId))
+            {
+                var author = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
+                if (author is not null)
+                {
+                    throw new DuplicateBookException
+                        ($"Книга с названием '{bookDto.Title}' уже существует у автора {author.Name}.");
+                }
+            }
         }
 
-        var authorOfBook = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
-        if (authorOfBook == null) throw new AbsentAuthorException($"Автора с id={bookDto.AuthorId} не существует");
+        var authorOfBook = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
+        if (authorOfBook == null)
+        {
+            throw new AbsentAuthorException
+                ($"Автора с id={bookDto.AuthorId} не существует");
+        }
 
         var bookToAdd = new Book
         {
@@ -62,8 +79,8 @@ public class BookService : IBookService
             AuthorId = bookDto.AuthorId,
         };
 
-        await _bookRepository.AddAsync(bookToAdd);
-
+        await _unitOfWork.BookRepository.AddAsync(bookToAdd);
+        await _unitOfWork.CommitChangesAsync();
         return new BookDto(
                 bookToAdd.Id,
                 bookToAdd.Title,
@@ -74,26 +91,39 @@ public class BookService : IBookService
     }
     public async Task UpdateBookInformationAsync(BookDto bookDto)
     {
-        var authorOfBook = await _authorRepository.GetByIdAsync(bookDto.AuthorId);
+        var authorOfBook = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
         if (authorOfBook == null)
-            throw new AbsentAuthorException($"Автора с id={bookDto.AuthorId} не существует");
-
-        var bookToUpdate = new Book
         {
-            Id = bookDto.Id,
-            Title = bookDto.Title,
-            PublishedYear = bookDto.PublishedYear,
-            AuthorId = bookDto.AuthorId
-        };
+            throw new AbsentAuthorException
+                ($"Автора с id={bookDto.AuthorId} не существует");
+        }
 
-        await _bookRepository.UpdateAsync(bookToUpdate);
+        var bookToUpdate = await _unitOfWork.BookRepository.GetByIdAsync(bookDto.Id);
+
+        if (bookToUpdate == null)
+        {
+            throw new AbsentBookException
+                ($"Невозможно обносить. Автор с id={bookDto.Id} не существует.");
+        }
+
+        bookToUpdate.Title = bookDto.Title;
+        bookToUpdate.PublishedYear = bookDto.PublishedYear;
+        bookToUpdate.AuthorId = bookDto.AuthorId;
+
+        await _unitOfWork.BookRepository.UpdateAsync(bookToUpdate);
+        await _unitOfWork.CommitChangesAsync();
     }
     public async Task DeleteBookAsync(long id)
     {
-        var bookToDelete = await _bookRepository.GetByIdAsync(id);
-        if (bookToDelete == null) throw new AbsentBookException($"Книжки с id={id} не существует");
+        var bookToDelete = await _unitOfWork.BookRepository.GetByIdAsync(id);
+        if (bookToDelete == null)
+        {
+            throw new AbsentBookException
+                ($"Книжки с id={id} не существует");
+        }
 
-        await _bookRepository.DeleteAsync(id);
+        await _unitOfWork.BookRepository.DeleteAsync(id);
+        await _unitOfWork.CommitChangesAsync();
     }
 }
 

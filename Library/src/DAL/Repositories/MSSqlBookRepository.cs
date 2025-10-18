@@ -5,51 +5,51 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.DAL.Repositories;
 
-public class MSSqlAuthorRepository : IAuthorRepository
+public class MSSqlBookRepository : IBookRepository
 {
     private readonly LibraryDbContext _dbContext;
 
-    public MSSqlAuthorRepository(LibraryDbContext dbContext)
+    public MSSqlBookRepository(LibraryDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task AddAsync(Author author)
+    public async Task AddAsync(Book author)
     {
-        await _dbContext.AddAsync(author);
+        await _dbContext.Books.AddAsync(author);
     }
 
     public async Task<bool> ExistsAsync(long id)
     {
-        return await _dbContext.Authors
+        return await _dbContext.Books
             .AsNoTracking()
             .AnyAsync(author => author.Id == id);
     }
 
-    public async Task<IEnumerable<Author>> GetAllAsync()
+    public async Task<IEnumerable<Book>> GetAllAsync()
     {
-        return await _dbContext.Authors.ToListAsync();
+        return await _dbContext.Books.ToListAsync();
     }
 
-    public async Task<Author?> GetByIdAsync(long id)
+    public async Task<Book?> GetByIdAsync(long id)
     {
         return await
-            _dbContext.Authors.FirstOrDefaultAsync(author => author.Id == id);
+            _dbContext.Books.FirstOrDefaultAsync(author => author.Id == id);
 
     }
 
     public async Task DeleteAsync(long id)
     {
-        var authorToDelete = await _dbContext.Authors.FindAsync(id);
+        var authorToDelete = await _dbContext.Books.FindAsync(id);
         if (authorToDelete != null)
         {
-            _dbContext.Authors.Remove(authorToDelete);
+            _dbContext.Books.Remove(authorToDelete);
         }
     }
-    public Task UpdateAsync(Author author)
+    public Task UpdateAsync(Book author)
     {
         _dbContext.Update(author);
         return Task.CompletedTask;
     }
-
 }
+
