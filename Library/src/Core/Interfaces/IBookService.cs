@@ -1,9 +1,9 @@
-using Core.DTOs;
-using Core.Entities;
+using Library.Core.DTOs;
+using Library.Core.Entities;
 
-namespace Core.Interfaces;
+namespace Library.Core.Interfaces;
 
-public interface IBooksService
+public interface IBookService
 {
     Task<IEnumerable<BookDto>> GetAllBooksAsync();
     Task<BookDto> GetBookByIdAsync(long id);

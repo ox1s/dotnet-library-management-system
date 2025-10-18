@@ -1,8 +1,8 @@
-using Core.Entities;
+using Library.Core.Entities;
 
-namespace Core.Interfaces;
+namespace Library.Core.Interfaces;
 
-public interface IBooksRepository
+public interface IBookRepository
 {
     Task<IEnumerable<Book>> GetAllAsync();
     Task<Book?> GetByIdAsync(long id);

@@ -1,11 +1,11 @@
-﻿using Core.Interfaces;
-using Core.Entities;
+﻿using Library.Core.Interfaces;
+using Library.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DAL.Repositories;
+namespace Library.DAL.Repositories;
 
-public class InMemoryBooksRepository : IBooksRepository
+public class InMemoryBookRepository : IBookRepository
 {
     List<Book> _books = new List<Book>();
 
@@ -23,7 +23,8 @@ public class InMemoryBooksRepository : IBooksRepository
     }
     public Task UpdateAsync(Book book)
     {
-        var authorToUpdate = _books.FirstOrDefault(x => x.Id == book.Id);
+        var indexToUpdate = _books.FindIndex(x => x.Id == book.Id);
+        _books[indexToUpdate] = book;
         return Task.CompletedTask;
     }
     public Task DeleteAsync(long id)

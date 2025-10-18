@@ -1,4 +1,4 @@
-namespace BLL;
+namespace Library.BLL;
 
 public class AbsentBookException : Exception
 {

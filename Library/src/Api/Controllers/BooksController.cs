@@ -1,18 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Core.Interfaces;
-using Core.DTOs;
-
+using Library.Core.Interfaces;
+using Library.Core.DTOs;
+using Library.API.Controllers;
 
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-
-public class BooksController : ControllerBase
+public class BooksController : BaseController
 {
-    private readonly IBooksService _bookService;
+    private readonly IBookService _bookService;
 
-    public BooksController(IBooksService bookService)
+    public BooksController(IBookService bookService)
     {
         _bookService = bookService;
     }

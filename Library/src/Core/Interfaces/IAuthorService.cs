@@ -1,9 +1,9 @@
-using Core.Entities;
-using Core.DTOs;
+using Library.Core.Entities;
+using Library.Core.DTOs;
 
-namespace Core.Interfaces;
+namespace Library.Core.Interfaces;
 
-public interface IAuthorsService
+public interface IAuthorService
 {
     Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync();
     Task<AuthorDto> GetAuthorByIdAsync(long id);

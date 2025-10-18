@@ -1,21 +1,21 @@
-using Core.Interfaces;
-using Core.DTOs;
-using Core.Entities;
+using Library.Core.Interfaces;
+using Library.Core.DTOs;
+using Library.Core.Entities;
 
-namespace BLL.Services;
+namespace Library.BLL.Services;
 
-public class AuthorsService : IAuthorsService
+public class AuthorService : IAuthorService
 {
-    private readonly IAuthorsRepository _authorsRepository;
+    private readonly IAuthorRepository _authorRepository;
 
-    public AuthorsService(IAuthorsRepository authorRepository)
+    public AuthorService(IAuthorRepository authorRepository)
     {
-        _authorsRepository = authorRepository;
+        _authorRepository = authorRepository;
     }
 
     public async Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync()
     {
-        var authorsEntities = await _authorsRepository.GetAllAsync();
+        var authorsEntities = await _authorRepository.GetAllAsync();
 
         var authorsDtos = authorsEntities.Select(author => new AuthorDto(
             author.Id,
@@ -27,7 +27,7 @@ public class AuthorsService : IAuthorsService
     }
     public async Task<AuthorDto> GetAuthorByIdAsync(long id)
     {
-        var author = await _authorsRepository.GetByIdAsync(id);
+        var author = await _authorRepository.GetByIdAsync(id);
         if (author == null) throw new AbsentAuthorException($"Автора с id={id} не существует");
         return new AuthorDto(
                 author.Id,
@@ -37,7 +37,7 @@ public class AuthorsService : IAuthorsService
 
     public async Task<AuthorDto> AddAuthorAsync(CreateAuthorDto authorDto)
     {
-        var existingAuthors = await _authorsRepository.GetAllAsync();
+        var existingAuthors = await _authorRepository.GetAllAsync();
 
         if (existingAuthors.Any(author => author.Name == authorDto.Name))
         {
@@ -50,7 +50,7 @@ public class AuthorsService : IAuthorsService
             DateOfBirth = authorDto.DateOfBirth
         };
 
-        await _authorsRepository.AddAsync(authorToAdd);
+        await _authorRepository.AddAsync(authorToAdd);
 
         return new AuthorDto(
                 authorToAdd.Id,
@@ -60,21 +60,21 @@ public class AuthorsService : IAuthorsService
     }
     public async Task UpdateAuthorInformationAsync(AuthorDto authorDto)
     {
+        var authorToUpdate = await _authorRepository.GetByIdAsync(authorDto.Id);
 
-        var authorToUpdate = new Author
-        {
-            Id = authorDto.Id,
-            Name = authorDto.Name,
-            DateOfBirth = authorDto.DateOfBirth
-        };
+        if (authorToUpdate == null)
+            throw new AbsentAuthorException($"Невозможно обносить. Автор с id={authorDto.Id} не существует.");
 
-        await _authorsRepository.UpdateAsync(authorToUpdate);
+        authorToUpdate.Name = authorDto.Name;
+        authorToUpdate.DateOfBirth = authorDto.DateOfBirth;
+
+        await _authorRepository.UpdateAsync(authorToUpdate);
     }
     public async Task DeleteAuthorAsync(long id)
     {
-        var authorToDelete = await _authorsRepository.GetByIdAsync(id);
+        var authorToDelete = await _authorRepository.GetByIdAsync(id);
         if (authorToDelete == null) throw new AbsentAuthorException($"Автора с id={id} не существует");
-        await _authorsRepository.DeleteAsync(id);
+        await _authorRepository.DeleteAsync(id);
     }
 }
 

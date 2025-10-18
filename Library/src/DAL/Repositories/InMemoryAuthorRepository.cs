@@ -1,9 +1,9 @@
-using Core.Interfaces;
-using Core.Entities;
+using Library.Core.Interfaces;
+using Library.Core.Entities;
 
-namespace DAL.Repositories;
+namespace Library.DAL.Repositories;
 
-public class InMemoryAuthorsRepository : IAuthorsRepository
+public class InMemoryAuthorRepository : IAuthorRepository
 {
     List<Author> _authors = new List<Author>();
 
@@ -30,4 +30,9 @@ public class InMemoryAuthorsRepository : IAuthorsRepository
         _authors.RemoveAll(x => x.Id == id);
         return Task.CompletedTask;
     }
+
+    public Task<bool> ExistsAsync(long id) =>
+        Task.FromResult(_authors.Any(author => author.Id == id));
+
+
 }

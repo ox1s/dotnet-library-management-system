@@ -1,17 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
-using Core.Interfaces;
-using Core.DTOs;
+using Library.Core.Interfaces;
+using Library.Core.DTOs;
+using Library.API.Controllers;
 
 
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class AuthorsController : ControllerBase
+public class AuthorsController : BaseController
 {
-    private readonly IAuthorsService _authorService;
+    private readonly IAuthorService _authorService;
 
-    public AuthorsController(IAuthorsService authorService)
+    public AuthorsController(IAuthorService authorService)
     {
         _authorService = authorService;
     }
@@ -19,12 +18,9 @@ public class AuthorsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAuthor(long id)
+    public async Task<IActionResult> GetAuthor([FromRoute] long id)
     {
         var authorDto = await _authorService.GetAuthorByIdAsync(id);
-
-        if (authorDto == null) return NotFound();
-
         return Ok(authorDto);
     }
 
@@ -36,6 +32,24 @@ public class AuthorsController : ControllerBase
         var createdAuthorDto = await _authorService.AddAuthorAsync(createDto);
 
         return CreatedAtAction(nameof(GetAuthor), new { id = createdAuthorDto.Id }, createdAuthorDto);
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateAuthor([FromQuery] long id, [FromBody] AuthorDto author)
+    {
+        await _authorService.UpdateAuthorInformationAsync(author);
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteAuthor([FromQuery] long id)
+    {
+        await _authorService.DeleteAuthorAsync(id);
+        return Ok();
     }
 
 }
