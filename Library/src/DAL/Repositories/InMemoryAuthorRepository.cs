@@ -5,7 +5,14 @@ namespace Library.DAL.Repositories;
 
 public class InMemoryAuthorRepository : IAuthorRepository
 {
-    List<Author> _authors = new List<Author>();
+    private readonly List<Author> _authors;
+    private readonly List<Book> _books;
+
+    public InMemoryAuthorRepository(List<Author> authors, List<Book> books)
+    {
+        _authors = authors;
+        _books = books;
+    }
 
     private long _currentId = 1;
     public Task<IEnumerable<Author>> GetAllAsync() =>
@@ -47,14 +54,19 @@ public class InMemoryAuthorRepository : IAuthorRepository
         return Task.FromResult(authors.Any());
     }
 
-    // Методы нужны для задания с EFCore. При обновлении решила не удалять
     public Task<IEnumerable<Author>> GetAllWithBooksAsync()
     {
-        throw new NotImplementedException();
+        foreach (var author in _authors)
+        {
+            author.Books = _books.Where(b => b.AuthorId == author.Id).ToList();
+        }
+        return Task.FromResult(_authors.AsEnumerable());
     }
-    public Task<IEnumerable<Author>> GetByNameAsync(string name)
-    {
-        throw new NotImplementedException();
-    }
+
+
+    public Task<IEnumerable<Author>> GetByNameAsync(string name) =>
+        Task.FromResult(_authors
+                        .Where(author =>
+                        author.Name.Contains(name)));
 
 }

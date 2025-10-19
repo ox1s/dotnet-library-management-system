@@ -1,6 +1,8 @@
 using Library.Core.Interfaces;
 using Library.Core.DTOs;
 using Library.Core.Entities;
+using Library.BLL.Exceptions;
+
 
 namespace Library.BLL.Services;
 
@@ -116,7 +118,8 @@ public class AuthorService : IAuthorService
     private Task ValidateDate(DateOnly dateOfBirth)
     {
         if (dateOfBirth >= DateOnly.FromDateTime(DateTime.UtcNow))
-            throw new ImpossibleDateException("Дата рождения не может быть в будущем.");
+            throw new ImpossibleDateException
+                ("Дата рождения не может быть в будущем");
         return Task.CompletedTask;
     }
 
@@ -126,7 +129,7 @@ public class AuthorService : IAuthorService
     {
         if (string.IsNullOrEmpty(name))
             throw new AbsentNameAuthorException
-                ($"Невозможно обновить данные c пустым именем");
+                ("Автор без имени не корректен");
 
 
         if (await _unitOfWork.AuthorRepository.ExistsByNameAndBirthDateAsync(name, dateOfBirth, existingAuthorId))

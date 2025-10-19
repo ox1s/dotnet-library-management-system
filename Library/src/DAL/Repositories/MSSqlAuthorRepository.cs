@@ -1,4 +1,4 @@
-using Library.BLL.DataContext;
+using Library.DAL.DataContext;
 using Library.Core.Entities;
 using Library.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -74,22 +74,20 @@ public class MSSqlAuthorRepository : IAuthorRepository
         return await query.AnyAsync();
     }
 
-    // Спец. запросы
 
     public async Task<IEnumerable<Author>> GetAllWithBooksAsync()
     {
         return await _dbContext
                         .Authors
-                        .Include(a => a.Books)
+                        .Include(author => author.Books)
                         .ToListAsync();
     }
     public async Task<IEnumerable<Author>> GetByNameAsync(string name)
     {
         return await _dbContext
                         .Authors
-                        .Where(a => a.Name.Contains(name))
+                        .Where(author => author.Name.Contains(name))
                         .ToListAsync();
-
     }
 
 }

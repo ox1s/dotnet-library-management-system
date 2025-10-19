@@ -1,4 +1,4 @@
-using Library.BLL.DataContext;
+using Library.DAL.DataContext;
 using Library.Core.Entities;
 using Library.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +70,6 @@ public class MSSqlBookRepository : IBookRepository
         return await query.AnyAsync();
     }
 
-    // EFCore}
     public async Task<IEnumerable<Book>> GetByYearAsync(int year)
     {
         return await _dbContext

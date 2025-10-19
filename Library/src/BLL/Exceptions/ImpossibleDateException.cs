@@ -1,4 +1,4 @@
-namespace Library.BLL;
+namespace Library.BLL.Exceptions;
 
 public class ImpossibleDateException : Exception
 {

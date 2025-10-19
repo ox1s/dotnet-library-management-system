@@ -7,7 +7,13 @@ namespace Library.DAL.Repositories;
 
 public class InMemoryBookRepository : IBookRepository
 {
-    List<Book> _books = new List<Book>();
+    private readonly List<Book> _books;
+
+    public InMemoryBookRepository(List<Book> books)
+    {
+        _books = books;
+    }
+
 
     private long _currentId = 1;
     public Task<IEnumerable<Book>> GetAllAsync() =>
@@ -39,19 +45,20 @@ public class InMemoryBookRepository : IBookRepository
         // одинаковые названия у книженций быть могут
         // Но, чтобы они были у одного автора - врятли
         var books = _books
-                        .Where(book =>
-                        book.Title == title
-                        &&
-                        book.AuthorId == authorId);
+                    .Where(book =>
+                    book.Title == title
+                    &&
+                    book.AuthorId == authorId);
         
         return Task.FromResult(books.Any());
     }
 
-
-    // Для EFCore
-
     public Task<IEnumerable<Book>> GetByYearAsync(int year)
     {
-        throw new NotImplementedException();
+        var books = _books
+                    .Where(book => book.PublishedYear > year)
+                    .ToList();
+        return Task.FromResult(books.AsEnumerable());
+        
     }
 }

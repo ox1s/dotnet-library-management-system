@@ -1,4 +1,4 @@
-using Library.BLL.DataContext;
+using Library.DAL.DataContext;
 using Library.Core.Interfaces;
 
 namespace Library.DAL.Repositories;

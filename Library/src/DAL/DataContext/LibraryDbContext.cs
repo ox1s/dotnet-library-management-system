@@ -1,8 +1,7 @@
 using Library.Core.Entities;
-using Library.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.BLL.DataContext;
+namespace Library.DAL.DataContext;
 
 public class LibraryDbContext : DbContext
 {
@@ -12,8 +11,4 @@ public class LibraryDbContext : DbContext
     public LibraryDbContext(DbContextOptions options) : base(options)
     { }
 
-    public async Task CommitChangesAsync()
-    {
-        await SaveChangesAsync();
-    }
 }

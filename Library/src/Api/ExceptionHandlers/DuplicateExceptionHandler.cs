@@ -1,5 +1,5 @@
 using System.Net;
-using Library.BLL;
+using Library.BLL.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace Library.API.ExceptionHandlers;

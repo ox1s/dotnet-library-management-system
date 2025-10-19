@@ -1,4 +1,5 @@
 using Library.DAL;
+using Library.DAL.Seeder;
 using Library.BLL;
 using Library.API;
 using Library.API.ExceptionHandlers;
@@ -19,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    await app.SeedDataAsync();
     app.UseExceptionHandler();
 
     if (app.Environment.IsDevelopment())

@@ -1,6 +1,7 @@
 using Library.Core.Interfaces;
 using Library.Core.DTOs;
 using Library.Core.Entities;
+using Library.BLL.Exceptions;
 
 namespace Library.BLL.Services;
 
@@ -125,7 +126,7 @@ public class BookService : IBookService
 
         if (authorEntity.DateOfBirth.Year > publishedYear)
             throw new ImpossibleDateException
-                ("Крякнуть и что-то написать сложновато");
+                ("Если что-то и написал, то во снах матери. Дата публикации раньше года рождения!");
 
 
         if (string.IsNullOrEmpty(title))
