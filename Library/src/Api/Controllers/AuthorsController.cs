@@ -38,10 +38,12 @@ public class AuthorsController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateAuthor([FromRoute] long id, [FromBody] AuthorDto author)
+    public async Task<IActionResult> UpdateAuthor([FromRoute] long id, [FromBody] UpdateAuthorDto updateDto)
     {
-        await _authorService.UpdateAuthorInformationAsync(author);
-        return Ok();
+        var existingAuthor = await _authorService.GetAuthorByIdAsync(id);
+        var authorToUpdate = new AuthorDto(id, updateDto.Name, updateDto.DateOfBirth);
+        await _authorService.UpdateAuthorInformationAsync(authorToUpdate);
+        return NoContent();
     }
 
     [HttpDelete("{id}")]

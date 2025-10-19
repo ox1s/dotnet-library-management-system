@@ -59,6 +59,7 @@ public class BookService : IBookService
                 var author = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
                 if (author is not null)
                 {
+                    Console.WriteLine("DuplicateBookException");
                     throw new DuplicateBookException
                         ($"Книга с названием '{bookDto.Title}' уже существует у автора {author.Name}.");
                 }
