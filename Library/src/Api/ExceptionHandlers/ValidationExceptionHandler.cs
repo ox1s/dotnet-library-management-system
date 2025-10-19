@@ -4,27 +4,23 @@ using Microsoft.AspNetCore.Diagnostics;
 
 namespace Library.API.ExceptionHandlers;
 
-internal sealed class NotFoundExceptionHandler(
+internal sealed class ValidationExceptionHandler(
     IProblemDetailsService problemDetailsService,
-    ILogger<NotFoundExceptionHandler> logger) : IExceptionHandler
+    ILogger<ValidationExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
          HttpContext httpContext,
          Exception exception,
          CancellationToken cancellationToken)
     {
-        if (exception is not
-                            (AbsentAuthorException
-                            or AbsentBookException
-                            or AbsentNameAuthorException
-                            or AbsentTitleBookException))
+        if (exception is not ImpossibleDateException)
         {
             return false;
         }
 
-        logger.LogWarning(exception, $"Запрошенный ресурс не найден: {exception.Message}");
+        logger.LogWarning(exception, $"Введенная дата не корректна: {exception.Message}");
 
-        httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        httpContext.Response.StatusCode = (int)HttpStatusCode.UnprocessableEntity;
 
         await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {
@@ -32,9 +28,9 @@ internal sealed class NotFoundExceptionHandler(
             ProblemDetails =
             {
                 Type = exception.GetType().Name,
-                Title = "Ресурс не найден",
+                Title = "Дата не действительна",
                 Detail = exception.Message,
-                Status = StatusCodes.Status404NotFound,
+                Status = StatusCodes.Status422UnprocessableEntity,
             }
         });
 

@@ -39,13 +39,9 @@ public class AuthorService : IAuthorService
 
     public async Task<AuthorDto> AddAuthorAsync(CreateAuthorDto authorDto)
     {
-        var existingAuthors = await _unitOfWork.AuthorRepository.GetAllAsync();
 
-        if (existingAuthors.Any(author => author.Name == authorDto.Name))
-        {
-            throw new DuplicateAuthorException
-                ($"Автор с именем '{authorDto.Name}' уже существует");
-        }
+        await ValidateName(authorDto.Name, authorDto.DateOfBirth);
+        await ValidateDate(authorDto.DateOfBirth);
 
         var authorToAdd = new Author
         {
@@ -68,8 +64,11 @@ public class AuthorService : IAuthorService
         if (authorToUpdate == null)
         {
             throw new AbsentAuthorException
-                ($"Невозможно обносить. Автор с id={id} не существует");
+                ($"Невозможно обновить. Автор с id={id} не существует");
         }
+
+        await ValidateName(authorDto.Name, authorDto.DateOfBirth);
+        await ValidateDate(authorDto.DateOfBirth);
 
         authorToUpdate.Name = authorDto.Name;
         authorToUpdate.DateOfBirth = authorDto.DateOfBirth;
@@ -111,6 +110,34 @@ public class AuthorService : IAuthorService
             author.DateOfBirth
         ));
         return authorsDtos;
+    }
+
+
+    private async Task ValidateDate(DateOnly dateOfBirth)
+    {
+        if (dateOfBirth >= DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new ImpossibleDateException("Дата рождения не может быть в будущем.");
+    }
+
+    private async Task ValidateName(string name, DateOnly dateOfBirth)
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new AbsentNameAuthorException
+                ($"Невозможно обновить данные c пустым именем");
+
+
+        var existingAuthors = await _unitOfWork.AuthorRepository.GetAllAsync();
+        // По моей логике:
+        // все таки авторы с одинаковыми именами бывают,
+        // но, чтобы еще совпала дата рождения - 1 на 1,000,000,000
+        if (existingAuthors
+                .Any(author => author.Name == name
+                &&
+                author.DateOfBirth == dateOfBirth))
+        {
+            throw new DuplicateAuthorException
+                ($"Автор с именем '{name}' и датой рождения {dateOfBirth} уже существует");
+        }
     }
 }
 

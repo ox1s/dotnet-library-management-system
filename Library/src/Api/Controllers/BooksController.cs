@@ -46,5 +46,18 @@ public class BooksController : ControllerBase
         return CreatedAtAction(nameof(GetBook), new { id = createdBookDto.Id }, createdBookDto);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateBook(long id, UpdateBookDto bookDto)
+    {
+        await _bookService.UpdateBookInformationAsync(id, bookDto);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBook(long id)
+    {
+        await _bookService.DeleteBookAsync(id);
+        return NoContent();
+    }
 
 }

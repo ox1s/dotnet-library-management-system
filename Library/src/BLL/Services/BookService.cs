@@ -33,12 +33,6 @@ public class BookService : IBookService
             throw new AbsentBookException
                 ($"Книжки с id={id} не существует");
         }
-        var author = await _unitOfWork.AuthorRepository.GetByIdAsync(book.AuthorId);
-        if (author == null)
-        {
-            throw new AbsentAuthorException
-                ($"Автора с id={id} не существует");
-        }
 
         return new BookDto(
                 book.Id,
@@ -50,28 +44,8 @@ public class BookService : IBookService
 
     public async Task<BookDto> AddBookAsync(CreateBookDto bookDto)
     {
-        var existingAuthorsOfBooks = await _unitOfWork.BookRepository.GetAllAsync();
-
-        if (existingAuthorsOfBooks.Any(book => book.AuthorId == bookDto.AuthorId && book.Title == bookDto.Title))
-        {
-            if (await _unitOfWork.AuthorRepository.ExistsAsync(bookDto.AuthorId))
-            {
-                var author = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
-                if (author is not null)
-                {
-                    Console.WriteLine("DuplicateBookException");
-                    throw new DuplicateBookException
-                        ($"Книга с названием '{bookDto.Title}' уже существует у автора {author.Name}.");
-                }
-            }
-        }
-
-        var authorOfBook = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
-        if (authorOfBook == null)
-        {
-            throw new AbsentAuthorException
-                ($"Автора с id={bookDto.AuthorId} не существует");
-        }
+        await ValidateTitleWithAuthor(bookDto.Title, bookDto.AuthorId);
+        await ValidateDate(bookDto.PublishedYear);
 
         var bookToAdd = new Book
         {
@@ -90,22 +64,17 @@ public class BookService : IBookService
                 );
 
     }
-    public async Task UpdateBookInformationAsync(BookDto bookDto)
+    public async Task UpdateBookInformationAsync(long id, UpdateBookDto bookDto)
     {
-        var authorOfBook = await _unitOfWork.AuthorRepository.GetByIdAsync(bookDto.AuthorId);
-        if (authorOfBook == null)
-        {
-            throw new AbsentAuthorException
-                ($"Автора с id={bookDto.AuthorId} не существует");
-        }
 
-        var bookToUpdate = await _unitOfWork.BookRepository.GetByIdAsync(bookDto.Id);
+        var bookToUpdate = await _unitOfWork.BookRepository.GetByIdAsync(id);
 
         if (bookToUpdate == null)
         {
             throw new AbsentBookException
-                ($"Невозможно обносить. Автор с id={bookDto.Id} не существует.");
+                ($"Невозможно обновить. Книга с id={id} не существует.");
         }
+        await ValidateTitleWithAuthor(bookDto.Title, bookDto.AuthorId);
 
         bookToUpdate.Title = bookDto.Title;
         bookToUpdate.PublishedYear = bookDto.PublishedYear;
@@ -138,6 +107,47 @@ public class BookService : IBookService
             book.AuthorId
         ));
         return booksDtos;
+    }
+
+    private async Task ValidateDate(int year)
+    {
+        if (year >= DateTime.Now.Year)
+            throw new ImpossibleDateException
+                ("Дата не может быть в будущем.");
+    }
+    private async Task ValidateTitleWithAuthor(string title, long authorId)
+    {
+        if (string.IsNullOrEmpty(title))
+            throw new AbsentTitleBookException
+                ($"Книга без навзания не корректна");
+
+
+        var existingAuthorsOfBooks = await _unitOfWork.BookRepository.GetAllAsync();
+        if (existingAuthorsOfBooks
+                .Any(book => book.AuthorId == authorId
+                &&
+                book.Title == title))
+        {
+            // По моей логике:
+            // одинаковые названия у книженций быть могут
+            // Но, чтобы они были у одного автора - врятли
+            if (await _unitOfWork.AuthorRepository.ExistsAsync(authorId))
+            {
+                var author = await _unitOfWork.AuthorRepository.GetByIdAsync(authorId);
+                if (author is not null)
+                {
+                    throw new DuplicateBookException
+                        ($"У автора {author.Name} уже существует книга с таким названием {title}");
+                }
+            }
+        }
+
+        var authorOfBook = await _unitOfWork.AuthorRepository.GetByIdAsync(authorId);
+        if (authorOfBook == null)
+        {
+            throw new AbsentAuthorException
+                ($"Автора с id={authorId} не существует");
+        }
     }
 
 }

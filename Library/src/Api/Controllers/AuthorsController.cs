@@ -58,7 +58,7 @@ public class AuthorsController : ControllerBase
     public async Task<IActionResult> DeleteAuthor(long id)
     {
         await _authorService.DeleteAuthorAsync(id);
-        return Ok();
+        return NoContent();
     }
 
     // EF Запросы
