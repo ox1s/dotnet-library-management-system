@@ -44,7 +44,7 @@ public class AuthorService : IAuthorService
         if (existingAuthors.Any(author => author.Name == authorDto.Name))
         {
             throw new DuplicateAuthorException
-                ($"Автор с именем '{authorDto.Name}' уже существует.");
+                ($"Автор с именем '{authorDto.Name}' уже существует");
         }
 
         var authorToAdd = new Author
@@ -61,14 +61,14 @@ public class AuthorService : IAuthorService
                 authorToAdd.DateOfBirth);
 
     }
-    public async Task UpdateAuthorInformationAsync(AuthorDto authorDto)
+    public async Task UpdateAuthorInformationAsync(long id, UpdateAuthorDto authorDto)
     {
-        var authorToUpdate = await _unitOfWork.AuthorRepository.GetByIdAsync(authorDto.Id);
+        var authorToUpdate = await _unitOfWork.AuthorRepository.GetByIdAsync(id);
 
         if (authorToUpdate == null)
         {
             throw new AbsentAuthorException
-                ($"Невозможно обносить. Автор с id={authorDto.Id} не существует.");
+                ($"Невозможно обносить. Автор с id={id} не существует");
         }
 
         authorToUpdate.Name = authorDto.Name;
@@ -88,6 +88,29 @@ public class AuthorService : IAuthorService
 
         await _unitOfWork.AuthorRepository.DeleteAsync(id);
         await _unitOfWork.CommitChangesAsync();
+    }
+
+    public async Task<IEnumerable<AuthorWithBookCountDto>> GetAllAuthorsWithBookCountAsync()
+    {
+        var authorsWithBooks = await _unitOfWork.AuthorRepository.GetAllWithBooksAsync();
+
+        return authorsWithBooks.Select(a => new AuthorWithBookCountDto(
+            a.Id,
+            a.Name,
+            a.Books.Count
+        ));
+    }
+
+    public async Task<IEnumerable<AuthorDto>> GetAuthorsByNameAsync(string name)
+    {
+        var authorsEntities = await _unitOfWork.AuthorRepository.GetByNameAsync(name);
+
+        var authorsDtos = authorsEntities.Select(author => new AuthorDto(
+            author.Id,
+            author.Name,
+            author.DateOfBirth
+        ));
+        return authorsDtos;
     }
 }
 

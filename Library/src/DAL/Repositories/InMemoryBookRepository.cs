@@ -32,4 +32,11 @@ public class InMemoryBookRepository : IBookRepository
         _books.RemoveAll(Book => Book.Id == id);
         return Task.CompletedTask;
     }
+
+    // Для EFCore
+
+    public Task<IEnumerable<Book>> GetByYearAsync(int year)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -5,7 +5,9 @@ namespace Library.Core.Entities;
 public class Author
 {
     public long Id { get; set; }
-    [Required]
     public string Name { get; set; } = null!;
     public DateOnly DateOfBirth { get; set; }
+
+    // Для EFCore
+    public ICollection<Book> Books { get; set; } = new List<Book>();
 }

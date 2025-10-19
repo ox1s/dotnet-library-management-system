@@ -16,19 +16,31 @@ public class AuthorsController : ControllerBase
         _authorService = authorService;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAuthors(string name)
+    {
+        if (!string.IsNullOrEmpty(name))
+        {
+            var authors = await _authorService.GetAuthorsByNameAsync(name);
+            return Ok(authors);
+        }
+        else
+        {
+            var authors = await _authorService.GetAllAuthorsAsync();
+            return Ok(authors);
+        }
+    }
+
     [HttpGet("{id}")]
-    [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAuthor([FromRoute] long id)
+    public async Task<IActionResult> GetAuthor(long id)
     {
         var authorDto = await _authorService.GetAuthorByIdAsync(id);
         return Ok(authorDto);
     }
 
+
     [HttpPost]
-    [ProducesResponseType<AuthorDto>(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateAuthor([FromBody] CreateAuthorDto createDto)
+    public async Task<IActionResult> CreateAuthor(CreateAuthorDto createDto)
     {
         var createdAuthorDto = await _authorService.AddAuthorAsync(createDto);
 
@@ -36,23 +48,24 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateAuthor([FromRoute] long id, [FromBody] UpdateAuthorDto updateDto)
+    public async Task<IActionResult> UpdateAuthor(long id, UpdateAuthorDto authorDto)
     {
-        var existingAuthor = await _authorService.GetAuthorByIdAsync(id);
-        var authorToUpdate = new AuthorDto(id, updateDto.Name, updateDto.DateOfBirth);
-        await _authorService.UpdateAuthorInformationAsync(authorToUpdate);
+        await _authorService.UpdateAuthorInformationAsync(id, authorDto);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType<AuthorDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteAuthor([FromRoute] long id)
+    public async Task<IActionResult> DeleteAuthor(long id)
     {
         await _authorService.DeleteAuthorAsync(id);
         return Ok();
     }
 
+    // EF Запросы
+    [HttpGet("with-book-count")]
+    public async Task<IActionResult> GetAuthorsWithBookCount()
+    {
+        var authors = await _authorService.GetAllAuthorsWithBookCountAsync();
+        return Ok(authors);
+    }
 }

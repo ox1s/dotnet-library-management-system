@@ -1,3 +1,4 @@
+using Library.Core.DTOs;
 using Library.Core.Entities;
 
 namespace Library.Core.Interfaces;
@@ -10,4 +11,9 @@ public interface IAuthorRepository
     Task AddAsync(Author author);
     Task UpdateAsync(Author author);
     Task DeleteAsync(long id);
+
+    // EFCore
+    Task<IEnumerable<Author>> GetAllWithBooksAsync();
+    Task<IEnumerable<Author>> GetByNameAsync(string name);
+
 }

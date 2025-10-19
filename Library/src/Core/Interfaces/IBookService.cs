@@ -10,4 +10,7 @@ public interface IBookService
     Task<BookDto> AddBookAsync(CreateBookDto bookDto);
     Task UpdateBookInformationAsync(BookDto bookDto);
     Task DeleteBookAsync(long id);
+    // EFCore
+    Task<IEnumerable<BookDto>> GetAllBooksAfterYearAsync(int year);
+
 }

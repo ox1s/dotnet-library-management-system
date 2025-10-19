@@ -8,6 +8,11 @@ public interface IAuthorService
     Task<IEnumerable<AuthorDto>> GetAllAuthorsAsync();
     Task<AuthorDto> GetAuthorByIdAsync(long id);
     Task<AuthorDto> AddAuthorAsync(CreateAuthorDto authorDto);
-    Task UpdateAuthorInformationAsync(AuthorDto authorDto);
+    Task UpdateAuthorInformationAsync(long id, UpdateAuthorDto authorDto);
     Task DeleteAuthorAsync(long id);
+
+    // EFCore
+    Task<IEnumerable<AuthorWithBookCountDto>> GetAllAuthorsWithBookCountAsync();
+    Task<IEnumerable<AuthorDto>> GetAuthorsByNameAsync(string name);
+
 }

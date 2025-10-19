@@ -16,22 +16,35 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType<BookDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetBook(long id)
     {
         var bookDto = await _bookService.GetBookByIdAsync(id);
         return Ok(bookDto);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetBooks(int? year)
+    {
+        if (year == null)
+        {
+            var books = await _bookService.GetAllBooksAsync();
+            return Ok(books);
+        }
+        else
+        {
+            var books = await _bookService.GetAllBooksAfterYearAsync((int)year);
+            return Ok(books);
+        }
+
+    }
+
     [HttpPost]
-    [ProducesResponseType<BookDto>(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateBook([FromBody] CreateBookDto createDto)
     {
         var createdBookDto = await _bookService.AddBookAsync(createDto);
 
         return CreatedAtAction(nameof(GetBook), new { id = createdBookDto.Id }, createdBookDto);
     }
+
 
 }

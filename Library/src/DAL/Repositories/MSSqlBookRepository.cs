@@ -22,34 +22,46 @@ public class MSSqlBookRepository : IBookRepository
     public async Task<bool> ExistsAsync(long id)
     {
         return await _dbContext.Books
-            .AsNoTracking()
-            .AnyAsync(author => author.Id == id);
+                        .AsNoTracking()
+                        .AnyAsync(b => b.Id == id);
     }
 
     public async Task<IEnumerable<Book>> GetAllAsync()
     {
-        return await _dbContext.Books.ToListAsync();
+        return await _dbContext
+                        .Books
+                        .ToListAsync();
     }
 
     public async Task<Book?> GetByIdAsync(long id)
     {
         return await
-            _dbContext.Books.FirstOrDefaultAsync(author => author.Id == id);
+            _dbContext
+                .Books
+                .FirstOrDefaultAsync(b => b.Id == id);
 
     }
 
     public async Task DeleteAsync(long id)
     {
-        var authorToDelete = await _dbContext.Books.FindAsync(id);
-        if (authorToDelete != null)
-        {
-            _dbContext.Books.Remove(authorToDelete);
-        }
+        await _dbContext
+                .Books
+                .Where(b => b.Id == id)
+                .ExecuteDeleteAsync();
     }
     public Task UpdateAsync(Book author)
     {
         _dbContext.Update(author);
         return Task.CompletedTask;
     }
+
+    public async Task<IEnumerable<Book>> GetByYearAsync(int year)
+    {
+        return await _dbContext
+                        .Books
+                        .Where(b => b.PublishedYear > year)
+                        .ToListAsync();
+    }
+
 }
 

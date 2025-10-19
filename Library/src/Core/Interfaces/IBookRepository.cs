@@ -9,4 +9,7 @@ public interface IBookRepository
     Task AddAsync(Book book);
     Task UpdateAsync(Book book);
     Task DeleteAsync(long id);
+    // EFCore
+    Task<IEnumerable<Book>> GetByYearAsync(int year);
+
 }

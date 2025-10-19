@@ -126,5 +126,19 @@ public class BookService : IBookService
         await _unitOfWork.BookRepository.DeleteAsync(id);
         await _unitOfWork.CommitChangesAsync();
     }
+
+    public async Task<IEnumerable<BookDto>> GetAllBooksAfterYearAsync(int year)
+    {
+        var booksEntities = await _unitOfWork.BookRepository.GetByYearAsync(year);
+
+        var booksDtos = booksEntities.Select(book => new BookDto(
+            book.Id,
+            book.Title,
+            book.PublishedYear,
+            book.AuthorId
+        ));
+        return booksDtos;
+    }
+
 }
 
