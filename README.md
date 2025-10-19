@@ -1,6 +1,6 @@
 # dotnet-library-management-system
 Library management system ASP.NET Core Web API (Pre-Trainee Innowise assignment) 
-<img src="cat.png" alt="Котик" align="right" width="150" height="225">
+<img src="cat.png" alt="Котик" align="right" height="150">
 
 > **_ПРИМЕЧАНИЕ:_**
 > В проекте реализована 1 и 2 часть задания. Подключение списков из памяти можно осуществить раскомментированием соотвествующих строк и закомментированием подключения в классе Data Access Layer - [DependencyInjection.cs](Library/src/DAL/DependencyInjection.cs)
