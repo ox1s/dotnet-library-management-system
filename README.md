@@ -37,6 +37,7 @@ Library management system ASP.NET Core Web API (Pre-Trainee Innowise assignment)
 2. Сущности:
     - Настроить связь **один-ко-многим** между `Author` и `Book`
 Пример:
+```csharp
 public class Author
 {
     public int Id { get; set; }
@@ -44,6 +45,7 @@ public class Author
     public DateTime DateOfBirth { get; set; }
     public ICollection<Book> Books { get; set; }
 }
+```
 3. Перевести логику с List<T> → EF Core
     - Заменить все обращения к спискам — на запросы в БД с помощью EF + LINQ
 4. Использовать LINQ-запросы
