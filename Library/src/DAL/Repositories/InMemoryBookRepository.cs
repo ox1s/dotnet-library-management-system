@@ -1,4 +1,4 @@
-﻿using Library.Core.Interfaces;
+using Library.Core.Interfaces;
 using Library.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -32,6 +32,21 @@ public class InMemoryBookRepository : IBookRepository
         _books.RemoveAll(Book => Book.Id == id);
         return Task.CompletedTask;
     }
+
+    public Task<bool> ExistsByAuthorIdAndTitleAsync(string title, long authorId)
+    {
+        // По моей логике:
+        // одинаковые названия у книженций быть могут
+        // Но, чтобы они были у одного автора - врятли
+        var books = _books
+                        .Where(book =>
+                        book.Title == title
+                        &&
+                        book.AuthorId == authorId);
+        
+        return Task.FromResult(books.Any());
+    }
+
 
     // Для EFCore
 

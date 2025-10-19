@@ -67,7 +67,7 @@ public class AuthorService : IAuthorService
                 ($"Невозможно обновить. Автор с id={id} не существует");
         }
 
-        await ValidateName(authorDto.Name, authorDto.DateOfBirth);
+        await ValidateName(authorDto.Name, authorDto.DateOfBirth, id);
         await ValidateDate(authorDto.DateOfBirth);
 
         authorToUpdate.Name = authorDto.Name;
@@ -113,27 +113,23 @@ public class AuthorService : IAuthorService
     }
 
 
-    private async Task ValidateDate(DateOnly dateOfBirth)
+    private Task ValidateDate(DateOnly dateOfBirth)
     {
         if (dateOfBirth >= DateOnly.FromDateTime(DateTime.UtcNow))
             throw new ImpossibleDateException("Дата рождения не может быть в будущем.");
+        return Task.CompletedTask;
     }
 
-    private async Task ValidateName(string name, DateOnly dateOfBirth)
+    private async Task ValidateName(string name,
+                                    DateOnly dateOfBirth,
+                                    long? existingAuthorId = null)
     {
         if (string.IsNullOrEmpty(name))
             throw new AbsentNameAuthorException
                 ($"Невозможно обновить данные c пустым именем");
 
 
-        var existingAuthors = await _unitOfWork.AuthorRepository.GetAllAsync();
-        // По моей логике:
-        // все таки авторы с одинаковыми именами бывают,
-        // но, чтобы еще совпала дата рождения - 1 на 1,000,000,000
-        if (existingAuthors
-                .Any(author => author.Name == name
-                &&
-                author.DateOfBirth == dateOfBirth))
+        if (await _unitOfWork.AuthorRepository.ExistsByNameAndBirthDateAsync(name, dateOfBirth, existingAuthorId))
         {
             throw new DuplicateAuthorException
                 ($"Автор с именем '{name}' и датой рождения {dateOfBirth} уже существует");

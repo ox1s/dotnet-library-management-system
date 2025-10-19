@@ -11,6 +11,8 @@ public interface IAuthorRepository
     Task AddAsync(Author author);
     Task UpdateAsync(Author author);
     Task DeleteAsync(long id);
+    Task<bool> ExistsByNameAndBirthDateAsync(string name, DateOnly birthDate, long? excludeId = null);
+
 
     // EFCore
     Task<IEnumerable<Author>> GetAllWithBooksAsync();

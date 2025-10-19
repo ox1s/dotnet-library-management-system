@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddBusinessLogicLayer()
         .AddExceptionHandler<NotFoundExceptionHandler>()
         .AddExceptionHandler<DuplicateExceptionHandler>()
+        .AddExceptionHandler<ValidationExceptionHandler>()
         .AddExceptionHandler<GlobalExceptionHandler>()
         .AddProblemDetails();
 }

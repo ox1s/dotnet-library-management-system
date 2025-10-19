@@ -55,6 +55,22 @@ public class MSSqlBookRepository : IBookRepository
         return Task.CompletedTask;
     }
 
+    public async Task<bool> ExistsByAuthorIdAndTitleAsync(string title, long authorId)
+    {
+        // По моей логике:
+        // одинаковые названия у книженций быть могут
+        // Но, чтобы они были у одного автора - врятли
+        var query = _dbContext
+                        .Books
+                        .Where(book =>
+                        book.Title == title
+                        &&
+                        book.AuthorId == authorId);
+        
+        return await query.AnyAsync();
+    }
+
+    // EFCore}
     public async Task<IEnumerable<Book>> GetByYearAsync(int year)
     {
         return await _dbContext
@@ -62,6 +78,7 @@ public class MSSqlBookRepository : IBookRepository
                         .Where(b => b.PublishedYear > year)
                         .ToListAsync();
     }
+
 
 }
 

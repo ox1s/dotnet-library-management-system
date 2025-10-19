@@ -55,6 +55,24 @@ public class MSSqlAuthorRepository : IAuthorRepository
         _dbContext.Update(author);
         return Task.CompletedTask;
     }
+    public async Task<bool> ExistsByNameAndBirthDateAsync(string name, DateOnly birthDate, long? excludeId = null)
+    {
+        var query = _dbContext
+                        .Authors
+                        .Where(author =>
+                        author.Name == name
+                        &&
+                        author.DateOfBirth == birthDate);
+
+        if (excludeId.HasValue)
+        {
+            query = query
+                    .Where(author =>
+                    author.Id != excludeId.Value);
+        }
+
+        return await query.AnyAsync();
+    }
 
     // Спец. запросы
 

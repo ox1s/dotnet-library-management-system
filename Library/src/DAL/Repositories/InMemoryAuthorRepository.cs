@@ -34,13 +34,24 @@ public class InMemoryAuthorRepository : IAuthorRepository
     public Task<bool> ExistsAsync(long id) =>
         Task.FromResult(_authors.Any(author => author.Id == id));
 
+    public Task<bool> ExistsByNameAndBirthDateAsync(string name, DateOnly birthDate, long? excludeId = null)
+    {
+        // По моей логике:
+        // все таки авторы с одинаковыми именами бывают,
+        // но, чтобы еще совпала дата рождения - 1 на 1,000,000,000
+        var authors = _authors.Where(a => a.Name == name && a.DateOfBirth == birthDate);
+        if (excludeId.HasValue)
+        {
+            authors = authors.Where(a => a.Id != excludeId.Value);
+        }
+        return Task.FromResult(authors.Any());
+    }
 
     // Методы нужны для задания с EFCore. При обновлении решила не удалять
     public Task<IEnumerable<Author>> GetAllWithBooksAsync()
     {
         throw new NotImplementedException();
     }
-
     public Task<IEnumerable<Author>> GetByNameAsync(string name)
     {
         throw new NotImplementedException();
