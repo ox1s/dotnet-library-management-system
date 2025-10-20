@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Library.Core.Interfaces;
-using Microsoft.Extensions.Configuration;
 
 namespace Library.BLL;
 

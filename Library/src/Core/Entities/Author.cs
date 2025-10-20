@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Library.Core.Entities;
 
 public class Author
@@ -8,6 +6,5 @@ public class Author
     public string Name { get; set; } = null!;
     public DateOnly DateOfBirth { get; set; }
 
-    // Для EFCore
     public ICollection<Book> Books { get; set; } = new List<Book>();
 }

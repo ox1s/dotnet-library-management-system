@@ -11,7 +11,6 @@ public interface IBookRepository
     Task DeleteAsync(long id);
 
     Task<bool> ExistsByAuthorIdAndTitleAsync(string title, long authorId);
-    // EFCore
     Task<IEnumerable<Book>> GetByYearAsync(int year);
 
 }

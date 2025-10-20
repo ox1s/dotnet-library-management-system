@@ -1,8 +1,8 @@
 using Library.DAL;
-using Library.DAL.Seeder;
 using Library.BLL;
 using Library.API;
 using Library.API.ExceptionHandlers;
+using Library.API.Seeder;
 
 var builder = WebApplication.CreateBuilder(args);
 {

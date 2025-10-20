@@ -3,7 +3,7 @@ using Library.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Library.DAL.DataContext;
 
-namespace Library.DAL.Seeder;
+namespace Library.API.Seeder;
 
 public class FakerInitializer
 {

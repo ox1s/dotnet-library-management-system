@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 namespace Library.Core.Entities;
 
 public class Book
@@ -8,7 +6,7 @@ public class Book
     public string Title { get; set; } = null!;
     public int PublishedYear { get; set; }
     
-    
+
     public long AuthorId { get; set; }
     
     public Author? Author { get; set; }

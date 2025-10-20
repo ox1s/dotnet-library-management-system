@@ -1,7 +1,6 @@
 using Library.DAL.DataContext;
-using Library.DAL.Seeder;
 
-namespace Library.DAL;
+namespace Library.API.Seeder;
 
 public static class DataSeeder
 {
