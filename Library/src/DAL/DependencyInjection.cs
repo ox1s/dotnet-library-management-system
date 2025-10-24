@@ -13,7 +13,6 @@ public static class DependencyInjection
     public static IServiceCollection AddDataAccessLayer(this IServiceCollection services, IConfiguration configuration)
     {
         // Для списков
-        // ...- . .-.. .- ..--  .... --- .-. --- ---- . --. ---  -. .- ... - .-. --- . -. .. .-.-  -. .-  --- ... - .- .-- ---- .. .--- ... .-.-  -.. . -. -..- -.--.-
         // services.AddSingleton<IUnitOfWork, InMemoryUnitOfWork>();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");

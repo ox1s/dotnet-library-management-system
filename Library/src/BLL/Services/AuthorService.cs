@@ -42,7 +42,7 @@ public class AuthorService : IAuthorService
     {
 
         await ValidateName(authorDto.Name, authorDto.DateOfBirth);
-        await ValidateDate(authorDto.DateOfBirth);
+        ValidateDate(authorDto.DateOfBirth);
 
         var authorToAdd = new Author
         {
@@ -69,7 +69,7 @@ public class AuthorService : IAuthorService
         }
 
         await ValidateName(authorDto.Name, authorDto.DateOfBirth, id);
-        await ValidateDate(authorDto.DateOfBirth);
+        ValidateDate(authorDto.DateOfBirth);
 
         authorToUpdate.Name = authorDto.Name;
         authorToUpdate.DateOfBirth = authorDto.DateOfBirth;
@@ -114,12 +114,11 @@ public class AuthorService : IAuthorService
     }
 
 
-    private Task ValidateDate(DateOnly dateOfBirth)
+    private void ValidateDate(DateOnly dateOfBirth)
     {
         if (dateOfBirth >= DateOnly.FromDateTime(DateTime.UtcNow))
             throw new ImpossibleDateException
                 ("Дата рождения не может быть в будущем");
-        return Task.CompletedTask;
     }
 
     private async Task ValidateName(string name,
